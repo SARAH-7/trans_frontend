@@ -1,126 +1,121 @@
 # Powerpuff Girls Pong 🎮
 
-A fun Pong game themed around the Powerpuff Girls, built with **pure TypeScript and Tailwind CSS**.
+A fun Pong game themed around the Powerpuff Girls, built with vanilla TypeScript and Tailwind CSS.
 
-## 🚀 Quick Start with Docker
+## Assets Needed
+- Place `logo.png` (Powerpuff Girls logo) in the project root.
+- Place `hearts.gif` (animated hearts background) in the project root.
 
-### Option 1: Docker Compose (Recommended)
-```bash
-# Build and start the game
-npm run start
+## Fonts
+- Uses [Luckiest Guy](https://fonts.google.com/specimen/Luckiest+Guy) for headings and Comic Sans MS for body text.
 
-# Or manually:
-npm run build
-npm run docker:compose
-```
+## Features
 
-### Option 2: Docker Commands
-```bash
-# Build the Docker image
-npm run docker:build
+- **Powerpuff Girls Theme**: Pink (Blossom) vs Blue (Bubbles) paddles
+- **Power-ups**: Speed boost, size increase, and multi-ball effects
+- **Beautiful UI**: Gradient backgrounds and animated elements
+- **Responsive Design**: Works on different screen sizes
+- **Pure TypeScript**: No frameworks, just vanilla TypeScript
+- **Tailwind CSS**: Modern utility-first styling
 
-# Run the container
-npm run docker:run
-```
+## How to Play
 
-### Option 3: Manual Docker
-```bash
-# Build image
-docker build -t powerpuff-pong .
-
-# Run container
-docker run -p 8080:80 powerpuff-pong
-```
-
-## 🌐 Access the Game
-Open your browser and go to: **http://localhost:8080**
-
-## 🎮 Game Controls
+### Controls
 - **Player 1 (Blossom - Pink)**: W/S keys to move paddle up/down
 - **Player 2 (Bubbles - Blue)**: Up/Down arrow keys to move paddle up/down
 - **Power-ups**: Press Space bar to activate power-ups
 
-## 🛠️ Development
+### Game Rules
+- First player to score 11 points wins
+- Ball bounces off paddles and walls
+- Power-ups appear randomly and provide temporary boosts
+- Collect power-ups by hitting them with the ball
+- If a player collects a square on the opponent's side, they get a point
 
-### Prerequisites
-- Docker
-- Node.js & npm
+## Installation & Setup
 
-### Build Process
-```bash
-# Install dependencies
-npm install
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-# Build TypeScript and Tailwind CSS
-npm run build
+2. **Build the Project**
+   ```bash
+   npm run build
+   ```
 
-# Start with Docker
-npm run docker:compose
-```
+3. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
 
-### Development Mode
-```bash
-# Watch for changes
-npm run dev
+4. **Serve the Game**
+   ```bash
+   npm run serve
+   ```
 
-# In another terminal, start Docker
-npm run docker:compose
-```
+5. **Open in Browser**
+   Navigate to `http://localhost:8000`
 
-## 🐳 Docker Commands
+## Project Structure
 
-```bash
-# Start the game
-npm run docker:compose
-
-# Stop the game
-npm run docker:stop
-
-# View logs
-docker-compose logs -f
-
-# Rebuild and restart
-docker-compose down
-docker-compose up --build -d
-```
-
-## 📁 Project Structure
 ```
 ft_transcendence/
+├── index.html          # Main HTML file
 ├── src/
 │   ├── main.ts         # Game logic (TypeScript)
 │   └── input.css       # Tailwind CSS input
 ├── dist/               # Built files (generated)
-├── avatars/            # Character avatars
-├── Dockerfile          # Docker configuration
-├── docker-compose.yml  # Docker Compose config
-├── nginx.conf          # Nginx configuration
-└── package.json        # Dependencies and scripts
+├── logo.png            # Powerpuff Girls logo
+├── hearts.gif          # Animated hearts background
+├── package.json        # Dependencies and scripts
+├── tsconfig.json       # TypeScript configuration
+├── tailwind.config.js  # Tailwind CSS configuration
+└── README.md          # This file
 ```
 
-## ✨ Features
-- **Pure TypeScript**: No frameworks, just vanilla TypeScript
-- **Tailwind CSS**: Modern utility-first styling
-- **Docker Ready**: Easy deployment and portability
-- **Powerpuff Girls Theme**: Pink vs Blue paddles with power-ups
-- **Responsive Design**: Works on different screen sizes
+## Technologies Used
 
-## 🔧 Troubleshooting
+- **TypeScript**: For type-safe JavaScript development
+- **Tailwind CSS**: For utility-first styling
+- **HTML5 Canvas**: For game rendering
+- **Vanilla JavaScript**: No frameworks or libraries
 
-### Port Already in Use
-```bash
-# Check what's using port 8080
-lsof -i :8080
+## Game Features
 
-# Kill the process or use a different port
-docker run -p 8081:80 powerpuff-pong
-```
+### Visual Elements
+- Gradient backgrounds with Powerpuff Girls colors
+- Animated character representations
+- Floating hearts and decorative elements
+- Smooth paddle and ball animations
 
-### Rebuild Docker Image
-```bash
-docker-compose down
-docker-compose up --build -d
-```
+### Game Mechanics
+- Realistic ball physics with spin effects
+- Power-up system with visual feedback
+- Score tracking and game state management
+- Responsive controls and collision detection
+- If a player collects a square on the opponent's side, they get a point
 
-## 📝 License
+### Power-ups
+- **Speed Boost**: Increases ball speed temporarily
+- **Size Increase**: Makes the ball larger
+- **Multi-ball**: Creates multiple balls (simplified effect)
+
+## Development
+
+To modify the game:
+
+1. Edit `src/main.ts` for game logic changes
+2. Edit `index.html` for UI structure changes
+3. Edit `tailwind.config.js` for theme customization
+4. Run `npm run dev` for live development
+
+## Browser Compatibility
+
+- Modern browsers with ES2020 support
+- Chrome, Firefox, Safari, Edge
+- Requires JavaScript enabled
+
+## License
+
 MIT License - Feel free to modify and distribute! 

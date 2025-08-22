@@ -7,6 +7,7 @@ class PowerpuffPong {
         // Player information
         this.player1Name = 'Blossom';
         this.player2Name = 'Bubbles';
+        this.isLoggedIn = false;
         this.powerUps = [];
         // Game settings
         this.PADDLE_WIDTH = 15;
@@ -19,6 +20,7 @@ class PowerpuffPong {
         this.ctx = this.canvas.getContext('2d');
         this.initializeGame();
         this.setupEventListeners();
+        this.setupLoginSystem();
     }
     initializeGame() {
         // Initialize ball
@@ -78,6 +80,103 @@ class PowerpuffPong {
             });
         }
     }
+    setupLoginSystem() {
+        // Google Login Button
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        if (googleLoginBtn) {
+            googleLoginBtn.addEventListener('click', () => {
+                this.handleGoogleLogin();
+            });
+        }
+        // Start Game Button (from login screen)
+        const startGameBtn = document.getElementById('startGameBtn');
+        if (startGameBtn) {
+            startGameBtn.addEventListener('click', () => {
+                this.handleStartGame();
+            });
+        }
+        // Player name inputs
+        const player1Input = document.getElementById('player1Name');
+        const player2Input = document.getElementById('player2Name');
+        if (player1Input) {
+            player1Input.addEventListener('input', (e) => {
+                this.player1Name = e.target.value || 'Blossom';
+            });
+        }
+        if (player2Input) {
+            player2Input.addEventListener('input', (e) => {
+                this.player2Name = e.target.value || 'Bubbles';
+            });
+        }
+    }
+    handleGoogleLogin() {
+        // Simulate Google login (in a real app, you'd use Google OAuth)
+        this.isLoggedIn = true;
+        // Show success message
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        if (googleLoginBtn) {
+            googleLoginBtn.textContent = '✓ Signed in with Google';
+            googleLoginBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+            googleLoginBtn.classList.remove('bg-white', 'hover:bg-gray-100');
+        }
+        // Enable start game button
+        const startGameBtn = document.getElementById('startGameBtn');
+        if (startGameBtn) {
+            startGameBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            startGameBtn.classList.add('hover:bg-powerpuff-purple');
+        }
+    }
+    handleStartGame() {
+        if (!this.isLoggedIn) {
+            alert('Please sign in with Google first!');
+            return;
+        }
+        // Hide login section and show game section
+        const loginSection = document.getElementById('loginSection');
+        const gameSection = document.getElementById('gameSection');
+        if (loginSection && gameSection) {
+            loginSection.classList.add('hidden');
+            gameSection.classList.remove('hidden');
+        }
+        // Update player names in the UI
+        this.updatePlayerNames();
+        // Show game start screen
+        this.showStartScreen();
+    }
+    updatePlayerNames() {
+        // Update score display names
+        const player1ScoreElement = document.querySelector('#player1Score');
+        const player2ScoreElement = document.querySelector('#player2Score');
+        if (player1ScoreElement?.parentElement) {
+            const player1ScoreLabel = player1ScoreElement.parentElement.querySelector('p');
+            if (player1ScoreLabel) {
+                player1ScoreLabel.textContent = this.player1Name;
+            }
+        }
+        if (player2ScoreElement?.parentElement) {
+            const player2ScoreLabel = player2ScoreElement.parentElement.querySelector('p');
+            if (player2ScoreLabel) {
+                player2ScoreLabel.textContent = this.player2Name;
+            }
+        }
+        // Update control labels
+        const player1Control = document.querySelector('.bg-powerpuff-purple h3');
+        const player2Control = document.querySelector('.bg-powerpuff-blue h3');
+        if (player1Control) {
+            player1Control.textContent = `Player 1 (${this.player1Name})`;
+        }
+        if (player2Control) {
+            player2Control.textContent = `Player 2 (${this.player2Name})`;
+        }
+    }
+    showStartScreen() {
+        const overlay = document.getElementById('gameOverlay');
+        const message = document.getElementById('gameMessage');
+        if (overlay && message) {
+            overlay.classList.remove('hidden');
+            message.textContent = 'Welcome to Powerpuff Pong!';
+        }
+    }
     startGame() {
         this.gameRunning = true;
         this.initializeGame();
@@ -86,14 +185,6 @@ class PowerpuffPong {
             overlay.classList.add('hidden');
         }
         this.gameLoop();
-    }
-    showWelcomeScreen() {
-        const overlay = document.getElementById('gameOverlay');
-        const message = document.getElementById('gameMessage');
-        if (overlay && message) {
-            overlay.classList.remove('hidden');
-            message.textContent = 'Welcome to Powerpuff Pong!';
-        }
     }
     gameLoop() {
         if (!this.gameRunning)
@@ -375,6 +466,7 @@ class AppNavigation {
         this.profileManager = profileManager;
         this.sections = {
             homeSection: document.getElementById('homeSection'),
+            registerSection: document.getElementById('registerSection'),
             profileSection: document.getElementById('profileSection'),
             inviteSection: document.getElementById('inviteSection'),
             gameSection: document.getElementById('gameSection'),
@@ -389,38 +481,42 @@ class AppNavigation {
         this.showSection('homeSection');
     }
     isRegistered() {
-        return true; // No registration required anymore
+        return this.profileManager && this.profileManager.getName() !== 'Player';
     }
     setupNavEvents() {
         this.navLinks.navHome.addEventListener('click', (e) => { e.preventDefault(); this.showSection('homeSection'); });
-        this.navLinks.navRegister.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.showSection('gameSection');
-            // Initialize the game when shown
-            if (!this.gameInstance) {
-                this.gameInstance = new PowerpuffPong();
-                // Show the welcome overlay
-                this.gameInstance.showWelcomeScreen();
-            }
-        });
+        this.navLinks.navRegister.addEventListener('click', (e) => { e.preventDefault(); this.showSection('registerSection'); });
         this.navLinks.navProfile.addEventListener('click', (e) => {
             e.preventDefault();
+            if (!this.isRegistered()) {
+                alert('Please register first!');
+                this.showSection('registerSection');
+                return;
+            }
             this.showSection('profileSection');
         });
         this.navLinks.navInvite.addEventListener('click', (e) => {
             e.preventDefault();
+            if (!this.isRegistered()) {
+                alert('Please register first!');
+                this.showSection('registerSection');
+                return;
+            }
             this.showSection('inviteSection');
         });
         // Play button on home
         const playBtn = document.getElementById('playBtn');
         if (playBtn)
             playBtn.addEventListener('click', () => {
+                if (!this.isRegistered()) {
+                    alert('Please register first!');
+                    this.showSection('registerSection');
+                    return;
+                }
                 this.showSection('gameSection');
-                // Initialize the game when shown
+                // Only initialize the game when shown
                 if (!this.gameInstance) {
                     this.gameInstance = new PowerpuffPong();
-                    // Show the welcome overlay
-                    this.gameInstance.showWelcomeScreen();
                 }
             });
     }
@@ -428,6 +524,56 @@ class AppNavigation {
         Object.values(this.sections).forEach(sec => sec.classList.add('hidden'));
         this.sections[sectionId].classList.remove('hidden');
         this.currentSection = sectionId;
+    }
+}
+// --- Avatar Picker Logic ---
+function setupAvatarPicker(profileManager) {
+    const avatarPicker = document.getElementById('avatarPicker');
+    const selectedAvatarInput = document.getElementById('selectedAvatar');
+    if (!avatarPicker || !selectedAvatarInput)
+        return;
+    // List of avatar image filenames (from the actual avatars folder)
+    const avatarFiles = [
+        'avatars/Blossom.jpg',
+        'avatars/Bubbles.png',
+        'avatars/buttercup.jpg',
+        'avatars/Mojo-Jojo.jpg',
+        'avatars/Professor.png',
+        'avatars/HIM.png',
+        'avatars/Princesa.png',
+    ];
+    // Clear picker
+    avatarPicker.innerHTML = '';
+    avatarFiles.forEach((file) => {
+        const img = document.createElement('img');
+        img.src = file;
+        img.alt = file.split('/').pop()?.split('.')[0] || 'avatar';
+        img.className = 'w-16 h-16 rounded-full border-4 border-transparent cursor-pointer transition-all hover:border-powerpuff-pink';
+        img.tabIndex = 0;
+        img.setAttribute('data-avatar', file);
+        // Highlight if selected
+        if (selectedAvatarInput.value === file || (!selectedAvatarInput.value && file === 'avatars/Blossom.jpg')) {
+            img.classList.add('ring-4', 'ring-powerpuff-pink');
+        }
+        img.addEventListener('click', () => {
+            selectedAvatarInput.value = file;
+            // Remove highlight from all
+            avatarPicker.querySelectorAll('img').forEach(i => i.classList.remove('ring-4', 'ring-powerpuff-pink'));
+            img.classList.add('ring-4', 'ring-powerpuff-pink');
+        });
+        avatarPicker.appendChild(img);
+    });
+    // Pre-select avatar if already registered
+    if (profileManager && profileManager.getAvatar) {
+        const current = profileManager.getAvatar();
+        if (current) {
+            selectedAvatarInput.value = current;
+            avatarPicker.querySelectorAll('img').forEach(i => {
+                if (i.src.includes(current)) {
+                    i.classList.add('ring-4', 'ring-powerpuff-pink');
+                }
+            });
+        }
     }
 }
 // --- Profile and Registration ---
@@ -439,6 +585,7 @@ class ProfileManager {
         this.games = 0;
         this.wins = 0;
         this.loadProfile();
+        this.setupRegister();
         this.updateProfileUI();
     }
     loadProfile() {
@@ -460,6 +607,43 @@ class ProfileManager {
             games: this.games,
             wins: this.wins,
         }));
+    }
+    setupRegister() {
+        const nameInput = document.getElementById('playerNameInput');
+        const registerBtn = document.getElementById('registerBtn');
+        const googleBtn = document.getElementById('googleLoginBtn');
+        const selectedAvatarInput = document.getElementById('selectedAvatar');
+        setupAvatarPicker(this);
+        if (nameInput)
+            nameInput.value = this.name;
+        if (selectedAvatarInput)
+            selectedAvatarInput.value = this.avatar;
+        if (registerBtn) {
+            registerBtn.addEventListener('click', () => {
+                this.name = nameInput.value || 'Player';
+                this.avatar = selectedAvatarInput.value || 'avatars/Blossom.jpg';
+                this.saveProfile();
+                this.updateProfileUI();
+                setupAvatarPicker(this); // update highlight
+                alert('Registered! You can now play.');
+                // After registration, allow access to game and menus
+                window.location.reload(); // reload to update navigation state
+            });
+        }
+        if (googleBtn) {
+            googleBtn.addEventListener('click', () => {
+                this.email = `${this.name.toLowerCase().replace(/\s+/g, '')}@gmail.com`;
+                this.avatar = selectedAvatarInput.value || 'avatars/Blossom.jpg';
+                this.saveProfile();
+                this.updateProfileUI();
+                setupAvatarPicker(this); // update highlight
+                googleBtn.textContent = '✓ Signed in with Google';
+                googleBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+                googleBtn.classList.remove('bg-white', 'hover:bg-gray-100');
+                alert('Registered! You can now play.');
+                window.location.reload();
+            });
+        }
     }
     updateProfileUI() {
         const nameEl = document.getElementById('profileName');
